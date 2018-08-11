@@ -53,3 +53,13 @@ The tool will return a shortened link to your uploaded gif upon completion::
     Uploading file my.gif
     ...
     File uploaded - see your gif at http://i.imgur.com/6WsQPpw.gif
+
+If you want your images to appear in your account, you additionally need to
+get a refresh token. See the `Imgur API <https://apidocs.imgur.com/#authorization-and-oauth>`
+for information on how to obtain this. Then, add a ``refresh_token`` line in
+your config file::
+
+    [imgur]
+    id = 9354da9ecdcfae3
+    secret = 8387eca75687ecad9876ead47786edac0875dc0d
+    refresh_token = 9812398ab1b2cc98de9fa982bacd31cb312c6194
