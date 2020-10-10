@@ -14,7 +14,7 @@ def get_config():
     client_secret = os.environ.get("IMGUR_API_SECRET")
     refresh_token = os.environ.get("IMGUR_REFRESH_TOKEN")
 
-    config = ConfigParser.SafeConfigParser()
+    config = ConfigParser.ConfigParser()
     config.read([os.path.expanduser("~/.config/imgur_uploader/uploader.cfg")])
 
     try:
@@ -36,9 +36,9 @@ def get_config():
 
 
 @click.command()
-@click.argument("image", type=click.Path(exists=True))
-def upload_image(image):
-    """Uploads an image file to Imgur"""
+@click.argument("images", type=click.Path(exists=True), nargs=-1)
+def upload_image(images):
+    """Uploads image files to Imgur"""
 
     config = get_config()
 
@@ -55,18 +55,19 @@ def upload_image(image):
         client = ImgurClient(config["id"], config["secret"])
         anon = True
 
-    click.echo("Uploading file {}".format(click.format_filename(image)))
+    for image in images:
+        click.echo("Uploading file {}".format(click.format_filename(image)))
 
-    response = client.upload_from_path(image, anon=anon)
+        response = client.upload_from_path(image, anon=anon)
 
-    click.echo("File uploaded - see your image at {}".format(response["link"]))
+        click.echo("File uploaded - see your image at {}".format(response["link"]))
 
-    try:
-        import pyperclip
+        try:
+            import pyperclip
 
-        pyperclip.copy(response["link"])
-    except ImportError:
-        print("pyperclip not found. To enable clipboard functionality," " please install it.")
+            pyperclip.copy(response["link"])
+        except ImportError:
+            print("pyperclip not found. To enable clipboard functionality," " please install it.")
 
 
 if __name__ == "__main__":
