@@ -71,11 +71,14 @@ def upload_image(images):
         click.echo("File uploaded - see your image at {}".format(response["link"]))
         
         if copylink:
+            # add individual link to clipboard
             links.append(response["link"])
             pyperclip.copy(response["link"])
     
     if copylink:
-        pyperclip.copy(" \n".join(links))
+        # add all links to the clipboard
+        # useful if user does not have a clipboard manager with history
+        pyperclip.copy("\n".join(links))
     else:
         print("pyperclip not found. To enable clipboard functionality, please install it.")
   
