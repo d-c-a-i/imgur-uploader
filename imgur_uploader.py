@@ -55,20 +55,30 @@ def upload_image(images):
         client = ImgurClient(config["id"], config["secret"])
         anon = True
 
+    links = []
+    copylink = True
+    
+    try:
+        import pyperclip
+    except ImportError:
+        copylink = False
+        
     for image in images:
         click.echo("Uploading file {}".format(click.format_filename(image)))
 
         response = client.upload_from_path(image, anon=anon)
 
         click.echo("File uploaded - see your image at {}".format(response["link"]))
-
-        try:
-            import pyperclip
-
+        
+        if copylink:
+            links.append(response["link"])
             pyperclip.copy(response["link"])
-        except ImportError:
-            print("pyperclip not found. To enable clipboard functionality," " please install it.")
-
+    
+    if copylink:
+        pyperclip.copy(" \n".join(links))
+    else:
+        print("pyperclip not found. To enable clipboard functionality, please install it.")
+  
 
 if __name__ == "__main__":
     upload_image()
