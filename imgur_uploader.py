@@ -8,6 +8,9 @@ try:
 except ImportError:
     import configparser as ConfigParser
 
+import argparse
+
+
 
 def get_config():
     client_id = os.environ.get("IMGUR_API_ID")
@@ -37,7 +40,8 @@ def get_config():
 
 @click.command()
 @click.argument("images", type=click.Path(exists=True), nargs=-1)
-def upload_image(images):
+@click.argument("path", type=click.Path(exists=False), nargs=1)
+def upload_image(images, path):
     """Uploads image files to Imgur"""
 
     config = get_config()
@@ -56,12 +60,7 @@ def upload_image(images):
         anon = True
 
     links = []
-    copylink = True
     
-    try:
-        import pyperclip
-    except ImportError:
-        copylink = False
         
     for image in images:
         click.echo("Uploading file {}".format(click.format_filename(image)))
@@ -69,18 +68,25 @@ def upload_image(images):
         response = client.upload_from_path(image, anon=anon)
 
         click.echo("File uploaded - see your image at {}".format(response["link"]))
+
+
+        import os.path
+        import numpy as np
+        if os.path.isfile(path):
+            matching_dic = np.load(path, allow_pickle=True)[()]
+            matching_dic[image] = response["link"]
+            size = len(matching_dic.values())
+
+        else:
+            matching_dic = {}
+            matching_dic[image] = response["link"]
+            size = len(matching_dic.values())
+        np.save(path, matching_dic)
+        print(f'{size} image-url pairs in dictionary')
+
+
+
         
-        if copylink:
-            # add individual link to clipboard
-            links.append(response["link"])
-            pyperclip.copy(response["link"])
-    
-    if copylink:
-        # add all links to the clipboard
-        # useful if user does not have a clipboard manager with history
-        pyperclip.copy("\n".join(links))
-    else:
-        print("pyperclip not found. To enable clipboard functionality, please install it.")
   
 
 if __name__ == "__main__":
