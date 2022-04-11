@@ -9,18 +9,19 @@ def read(*paths):
         return f.read()
 
 setup(
-    name='imgur-helper',
+    name='imgur-uploader',
     version='0.3.0',
-    description='Upload to imgur and record image-url pair',
+    description='A simple command line client for uploading files to Imgur.',
     long_description=read('README.rst'),
-    url='https://github.com/d-c-a-i/imgur-uploader',
+    url='https://github.com/atbaker/imgur-uploader',
     license='MIT',
-    author='Donglei Cai',
-    author_email='dcai@berkeley.edu',
+    author='Andrew Tork Baker',
+    author_email='andrew@atbaker.me',
     py_modules=['imgur_uploader'],
     include_package_data=True,
     install_requires=[
         'click',
+        'pyperclip',
         'imgurpython'
     ],
     entry_points='''
